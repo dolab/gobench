@@ -91,7 +91,7 @@ func StartWorkflow(s3service *s3.S3, works []*WorkConfig, logger *logger.Logger)
 
 			// emit jobs
 			delta := time.Second / time.Duration(work.Concurrent)
-			for j := 1; j <= work.BucketNumber(); j++ {
+			for j := 0; j < work.BucketNumber(); j++ {
 				// reset
 				var (
 					ticker  = time.NewTicker(delta)
@@ -103,7 +103,7 @@ func StartWorkflow(s3service *s3.S3, works []*WorkConfig, logger *logger.Logger)
 					select {
 					case <-ticker.C:
 						inchan <- &WriteWorkerIn{
-							Bucket: work.BucketPrefix + strconv.Itoa(j),
+							Bucket: work.BucketPrefix + strconv.Itoa(j+work.BucketStart),
 							Key:    work.ObjectPrefix + strconv.Itoa(counter),
 							Size:   work.Filesize,
 						}
@@ -126,7 +126,7 @@ func StartWorkflow(s3service *s3.S3, works []*WorkConfig, logger *logger.Logger)
 			close(inchan)
 
 			// waiting for all workers finished
-			for j := 0; j < work.ObjectTotals(); j++ {
+			for n := 0; n < work.ObjectTotals(); n++ {
 				<-outchan
 			}
 
@@ -143,7 +143,7 @@ func StartWorkflow(s3service *s3.S3, works []*WorkConfig, logger *logger.Logger)
 
 			// emit jobs
 			delta := time.Second / time.Duration(work.Concurrent)
-			for j := 1; j <= work.BucketNumber(); j++ {
+			for j := 0; j < work.BucketNumber(); j++ {
 				// reset
 				var (
 					ticker  = time.NewTicker(delta)
@@ -155,7 +155,7 @@ func StartWorkflow(s3service *s3.S3, works []*WorkConfig, logger *logger.Logger)
 					select {
 					case <-ticker.C:
 						inchan <- &ReadWorkerIn{
-							Bucket: work.BucketPrefix + strconv.Itoa(j),
+							Bucket: work.BucketPrefix + strconv.Itoa(j+work.BucketStart),
 							Key:    work.ObjectPrefix + strconv.Itoa(counter),
 						}
 
@@ -194,7 +194,7 @@ func StartWorkflow(s3service *s3.S3, works []*WorkConfig, logger *logger.Logger)
 
 			// emit jobs
 			delta := time.Second / time.Duration(work.Concurrent)
-			for j := 1; j <= work.BucketNumber(); j++ {
+			for j := 0; j < work.BucketNumber(); j++ {
 				var (
 					ticker  = time.NewTicker(delta)
 					counter = work.ObjectStart
@@ -205,7 +205,7 @@ func StartWorkflow(s3service *s3.S3, works []*WorkConfig, logger *logger.Logger)
 					select {
 					case <-ticker.C:
 						inchan <- &CleanWorkerIn{
-							Bucket: work.BucketPrefix + strconv.Itoa(j),
+							Bucket: work.BucketPrefix + strconv.Itoa(j+work.BucketStart),
 							Key:    work.ObjectPrefix + strconv.Itoa(counter),
 						}
 
