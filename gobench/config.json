@@ -1,0 +1,61 @@
+{
+    "host": "http://s3api.ecloud.com",
+    "region": "cn-south-1",
+    "accessKeyId": "5dIDvFWXyzWf-WeyUtAXps-_BmOF-rKZ5EI_vNtk",
+    "accessKeySecret": "wHKb0KxX0iddrKM35WRbEzCRxOPDq6vqewgla87L",
+    "workflow": [
+        {
+            "stage": "init",
+            "concurrent": 1,
+            "bucketPrefix": "s3testqiniu",
+            "bucketStart": 1,
+            "bucketEnd": 9,
+            "enabled": true
+        },
+        {
+            "stage": "write",
+            "concurrent": 10,
+            "file": "./README.md",
+            "filesize": 65536,
+            "bucketPrefix": "s3testqiniu",
+            "bucketStart": 1,
+            "bucketEnd": 9,
+            "objectPrefix": "myobjects",
+            "objectStart": 1,
+            "objectEnd": 10,
+            "hashCheck": true,
+            "enabled": true
+        },
+        {
+            "stage": "read",
+            "concurrent": 10,
+            "bucketPrefix": "s3testqiniu",
+            "bucketStart": 1,
+            "bucketEnd": 9,
+            "objectPrefix": "myobjects",
+            "objectStart": 1,
+            "objectEnd": 10,
+            "hashCheck": true,
+            "enabled": false
+        },
+        {
+            "stage": "clean",
+            "concurrent": 10,
+            "bucketPrefix": "s3testqiniu",
+            "bucketStart": 1,
+            "bucketEnd": 9,
+            "objectPrefix": "myobjects",
+            "objectStart": 1,
+            "objectEnd": 10,
+            "enabled": false
+        },
+        {
+            "stage": "dispose",
+            "concurrent": 1,
+            "bucketPrefix": "s3testqiniu",
+            "bucketStart": 1,
+            "bucketEnd": 9,
+            "enabled": false
+        }
+    ]
+}
